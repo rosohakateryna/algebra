@@ -1,1 +1,1028 @@
 
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Дії зі звичайними та десятковими дробами — Підготовка до НМТ</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  
+  <!-- KaTeX for rendering mathematical fractions and expressions -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6f9;
+      color: #1f2937;
+    }
+    .katex {
+      font-size: 1.2em;
+    }
+    .katex-display {
+      margin: 0.5em 0;
+    }
+    /* Custom scrollbar for clean review lists */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <div id="app" class="flex-grow flex flex-col max-w-4xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- HEADER / APP TITLE -->
+    <header class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-semibold mb-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+        Математика — Підготовка до НМТ
+      </div>
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+        Дії зі звичайними та десятковими дробами
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">
+        Діагностичний тест для визначення рівня підготовки та виявлення прогалин
+      </p>
+    </header>
+
+    <!-- START SCREEN -->
+    <main v-if="step === 'start'" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-10 flex-grow flex flex-col justify-center">
+      <div class="max-w-xl mx-auto w-full text-center space-y-6">
+        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-3xl font-bold shadow-inner">
+          📊
+        </div>
+        
+        <div class="space-y-3">
+          <h2 class="text-2xl font-bold text-slate-900">Ласкаво просимо!</h2>
+          <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+            Виконай усі завдання самостійно. Після завершення тест покаже не тільки результат, а й теми, які варто повторити. Наприкінці зроби скриншот сторінки з результатами та надішли вчителю.
+          </p>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-left text-xs sm:text-sm text-amber-800 space-y-1">
+          <p class="font-semibold flex items-center gap-1.5">
+            💡 Важлива інформація перед початком:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-amber-700">
+            <li>Тест містить 15 завдань різного типу (вибір відповіді, відповідність, коротка відповідь).</li>
+            <li>У завданнях з короткою відповіддю можна вводити числа як через кому (<span class="font-mono bg-amber-100 px-1 rounded">1,4</span>), так і через крапку (<span class="font-mono bg-amber-100 px-1 rounded">1.4</span>).</li>
+            <li>Правильні відповіді будуть показані лише наприкінці тесту.</li>
+          </ul>
+        </div>
+
+        <form @submit.prevent="startQuiz" class="space-y-4 pt-2">
+          <div class="text-left">
+            <label for="studentName" class="block text-xs font-semibold uppercase text-slate-500 mb-1">
+              Ім'я та прізвище учня / учениці <span class="text-rose-500">*</span>
+            </label>
+            <input 
+              id="studentName"
+              v-model.trim="studentName"
+              type="text" 
+              placeholder="Наприклад: Шевченко Олексій" 
+              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900 font-medium transition"
+              required
+            >
+          </div>
+
+          <button 
+            type="submit" 
+            :disabled="!studentName"
+            class="w-full py-3.5 px-6 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition flex items-center justify-center gap-2 text-base"
+          >
+            <span>Розпочати тест</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <!-- QUIZ SCREEN -->
+    <main v-else-if="step === 'quiz'" class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 sm:p-8 flex-grow flex flex-col">
+      
+      <!-- Top Bar: Progress & Question Counter -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-600 mb-2">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse"></span>
+            Завдання {{ currentQuestionIndex + 1 }} із {{ questions.length }}
+          </span>
+          <span class="text-indigo-600 font-bold">
+            {{ Math.round(((currentQuestionIndex + 1) / questions.length) * 100) }}%
+          </span>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+          <div 
+            class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+            :style="{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Question Content Area -->
+      <div class="flex-grow flex flex-col justify-between space-y-6">
+        
+        <div class="space-y-4">
+          <!-- Skill Badge -->
+          <div class="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold">
+            Навичка: {{ currentQuestion.skill }}
+          </div>
+
+          <!-- Question Prompt Text -->
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            {{ currentQuestion.title }}
+          </h2>
+
+          <!-- Main Mathematical Expression Display -->
+          <div v-if="currentQuestion.latexDisplay" class="py-4 px-6 bg-slate-50 border border-slate-200 rounded-xl text-center overflow-x-auto my-3">
+            <div class="katex-render text-lg sm:text-xl font-medium text-slate-900" :data-latex="currentQuestion.latexDisplay"></div>
+          </div>
+
+          <!-- Extra Description if present -->
+          <p v-if="currentQuestion.description" class="text-sm text-slate-600">
+            {{ currentQuestion.description }}
+          </p>
+
+          <!-- INPUT TYPES -->
+
+          <!-- 1. SINGLE CHOICE (Multiple Choice) -->
+          <div v-if="currentQuestion.type === 'single'" class="space-y-3 pt-2">
+            <label 
+              v-for="(option, optIdx) in currentQuestion.options" 
+              :key="optIdx"
+              :class="[
+                'flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition text-sm sm:text-base',
+                answers[currentQuestionIndex] === optIdx 
+                  ? 'border-indigo-600 bg-indigo-50/70 shadow-sm text-indigo-950 font-semibold' 
+                  : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+              ]"
+            >
+              <input 
+                type="radio" 
+                :name="'q_' + currentQuestionIndex" 
+                :value="optIdx" 
+                v-model="answers[currentQuestionIndex]"
+                class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300"
+              >
+              <span class="font-bold text-slate-500 w-6">{{ getLetter(optIdx) }})</span>
+              <span class="katex-render" :data-latex="option"></span>
+            </label>
+          </div>
+
+          <!-- 2. MATCHING (Встановлення відповідності) -->
+          <div v-else-if="currentQuestion.type === 'matching'" class="space-y-6 pt-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Left side: Questions 1, 2, 3 -->
+              <div class="space-y-3">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Вирази (1–3):</p>
+                <div 
+                  v-for="(item, idx) in currentQuestion.leftItems" 
+                  :key="idx" 
+                  class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between"
+                >
+                  <span class="font-bold text-slate-700 mr-2">{{ idx + 1 }})</span>
+                  <div class="katex-render text-slate-900 flex-grow" :data-latex="item"></div>
+                </div>
+              </div>
+
+              <!-- Right side: Choices А, Б, В, Г, Д -->
+              <div class="space-y-3">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Значення (А–Д):</p>
+                <div 
+                  v-for="(option, optIdx) in currentQuestion.rightOptions" 
+                  :key="optIdx" 
+                  class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-2"
+                >
+                  <span class="font-bold text-indigo-600 w-6 text-center">{{ getLetter(optIdx) }})</span>
+                  <div class="katex-render text-slate-900" :data-latex="option"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Matching Selection Grid -->
+            <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 space-y-3">
+              <p class="text-xs font-bold text-indigo-900 uppercase">Оберіть відповідності:</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div v-for="(item, idx) in currentQuestion.leftItems" :key="idx" class="flex flex-col gap-1">
+                  <label class="text-xs font-semibold text-slate-600">Для виразу {{ idx + 1 }}:</label>
+                  <select 
+                    v-model="matchingAnswers[currentQuestionIndex][idx]"
+                    class="p-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  >
+                    <option value="" disabled>-- Оберіть --</option>
+                    <option v-for="(opt, optIdx) in currentQuestion.rightOptions" :key="optIdx" :value="optIdx">
+                      {{ getLetter(optIdx) }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. SHORT NUMERIC ANSWER -->
+          <div v-else-if="currentQuestion.type === 'short'" class="space-y-3 pt-2">
+            <label class="block text-xs font-semibold text-slate-500 uppercase">
+              Введіть числову відповідь (ціле число або десятковий дріб):
+            </label>
+            <div class="relative max-w-xs">
+              <input 
+                type="text" 
+                v-model="answers[currentQuestionIndex]" 
+                placeholder="Наприклад: 1,4 або 25" 
+                class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-lg font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition"
+              >
+            </div>
+            <p class="text-xs text-slate-500">
+              * Записуйте дроби через кому або крапку (наприклад: <code>2,5</code> або <code>2.5</code>).
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+          <button 
+            @click="prevQuestion" 
+            :disabled="currentQuestionIndex === 0"
+            class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-100 active:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1.5 text-sm"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <span>Назад</span>
+          </button>
+
+          <button 
+            v-if="currentQuestionIndex < questions.length - 1"
+            @click="nextQuestion"
+            class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold shadow-md shadow-indigo-100 transition flex items-center gap-1.5 text-sm"
+          >
+            <span>Далі</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+
+          <button 
+            v-else
+            @click="finishQuiz"
+            class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold shadow-md shadow-emerald-100 transition flex items-center gap-1.5 text-sm"
+          >
+            <span>Завершити тест</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- RESULTS SCREEN -->
+    <main v-else-if="step === 'results'" class="space-y-6">
+      
+      <!-- SCREENSHOT REMINDER BANNER -->
+      <div class="bg-indigo-900 text-white p-4 sm:p-5 rounded-2xl shadow-lg text-center space-y-1 transform hover:scale-[1.01] transition">
+        <p class="text-lg sm:text-xl font-extrabold flex items-center justify-center gap-2">
+          <span>📸</span> Зроби скриншот результатів та надішли його вчителю.
+        </p>
+        <p class="text-xs sm:text-sm text-indigo-200">
+          На скриншоті має бути видно ім'я, загальний результат, таблицю навичок та рекомендації.
+        </p>
+      </div>
+
+      <!-- MAIN RESULTS CARD -->
+      <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+        
+        <!-- Header: Student Name & Final Score -->
+        <div class="text-center pb-6 border-b border-slate-100 space-y-2">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Результати діагностики НМТ</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            {{ studentName }}
+          </h2>
+          
+          <div class="flex items-center justify-center gap-4 pt-3">
+            <div class="bg-indigo-50 border border-indigo-100 px-5 py-3 rounded-2xl text-center">
+              <div class="text-xs font-semibold text-indigo-600 uppercase">Загальний бал</div>
+              <div class="text-2xl sm:text-3xl font-extrabold text-indigo-950">
+                {{ totalCorrectScore }} / {{ questions.length }}
+              </div>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-100 px-5 py-3 rounded-2xl text-center">
+              <div class="text-xs font-semibold text-emerald-600 uppercase">Успішність</div>
+              <div class="text-2xl sm:text-3xl font-extrabold text-emerald-950">
+                {{ percentageScore }}%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKILLS ANALYSIS TABLE -->
+        <div class="space-y-3">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>📊</span> Аналіз навичок
+          </h3>
+          
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">Навичка</th>
+                  <th class="p-3.5 text-center">Правильно</th>
+                  <th class="p-3.5 text-center">Усього</th>
+                  <th class="p-3.5 text-center">Результат</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr v-for="(stat, key) in categoryStats" :key="key" class="hover:bg-slate-50/50">
+                  <td class="p-3.5 font-medium text-slate-900">{{ stat.name }}</td>
+                  <td class="p-3.5 text-center font-bold text-slate-700">{{ stat.correct }}</td>
+                  <td class="p-3.5 text-center text-slate-500">{{ stat.total }}</td>
+                  <td class="p-3.5 text-center">
+                    <span 
+                      :class="[
+                        'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold',
+                        stat.percent >= 80 ? 'bg-emerald-100 text-emerald-800' :
+                        stat.percent >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'
+                      ]"
+                    >
+                      <span>{{ stat.percent >= 80 ? '🟢' : stat.percent >= 50 ? '🟡' : '🔴' }}</span>
+                      <span>{{ stat.percent }}%</span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="flex flex-wrap gap-4 text-xs text-slate-500 pt-1">
+            <span>🟢 Добре (80–100%)</span>
+            <span>🟡 Потрібно потренуватися (50–79%)</span>
+            <span>🔴 Потрібно повторити (&lt;50%)</span>
+          </div>
+        </div>
+
+        <!-- RECOMMENDATIONS SECTION -->
+        <div class="space-y-3 pt-2">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>📚</span> Що варто повторити
+          </h3>
+
+          <div v-if="topicsToReview.length > 0" class="bg-rose-50 border border-rose-200 rounded-xl p-4 space-y-2">
+            <p class="text-xs font-bold text-rose-900 uppercase">Рекомендуємо опрацювати наступні теми:</p>
+            <ul class="list-disc list-inside space-y-1 text-sm text-rose-800 font-medium">
+              <li v-for="(topic, tIdx) in topicsToReview" :key="tIdx">
+                {{ topic }}
+              </li>
+            </ul>
+          </div>
+
+          <div v-else class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-900 text-sm font-semibold flex items-center gap-2">
+            <span>🎉</span> Відмінна робота! Усі теми виконано на високому рівні!
+          </div>
+        </div>
+
+        <!-- MISTAKES DETAILED BREAKDOWN -->
+        <div class="space-y-3 pt-2">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>📝</span> Завдання, у яких були помилки
+          </h3>
+
+          <div v-if="incorrectQuestions.length > 0" class="space-y-3">
+            <div 
+              v-for="item in incorrectQuestions" 
+              :key="item.index" 
+              class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm space-y-2"
+            >
+              <div class="flex items-center justify-between font-bold text-slate-800 border-b border-slate-200 pb-2">
+                <span>№ {{ item.index + 1 }} — {{ item.question.skill }}</span>
+                <span class="text-xs px-2 py-0.5 bg-rose-100 text-rose-700 rounded font-semibold">Помилка</span>
+              </div>
+
+              <!-- Question Expression -->
+              <div class="py-2">
+                <span class="font-semibold text-slate-600">Завдання: </span>
+                <span class="text-slate-900 font-medium">{{ item.question.title }}</span>
+                <div v-if="item.question.latexDisplay" class="mt-1">
+                  <div class="katex-render inline-block" :data-latex="item.question.latexDisplay"></div>
+                </div>
+              </div>
+
+              <!-- Student answer vs Correct answer -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm pt-1">
+                <div class="p-2 bg-rose-50 border border-rose-200 rounded-lg text-rose-900">
+                  <span class="font-bold">Відповідь учня: </span>
+                  <span v-html="formatAnswerDisplay(item.question, item.userAnswer)"></span>
+                </div>
+                <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900">
+                  <span class="font-bold">Правильна відповідь: </span>
+                  <span v-html="formatAnswerDisplay(item.question, item.correctAnswer)"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="text-sm text-slate-500 italic bg-slate-50 p-4 rounded-xl text-center border border-slate-200">
+            Помилок немає! Ви відповіли правильно на всі 15 завдань.
+          </div>
+        </div>
+
+        <!-- RETAKE BUTTON -->
+        <div class="pt-4 text-center">
+          <button 
+            @click="restartQuiz" 
+            class="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 transition flex items-center justify-center gap-2 mx-auto"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>Пройти тест ще раз</span>
+          </button>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    const { createApp, ref, computed, watch, nextTick, onMounted } = Vue;
+
+    // QUESTION BANK VARIANTS
+    // Variant Sets ensure fresh numbers on restart while preserving precise NMT standards
+    const QUESTION_VARIANTS = [
+      // SET 1
+      [
+        {
+          skill: "Додавання звичайних дробів",
+          category: "Додавання/віднімання звичайних дробів",
+          topicToReview: "додавання звичайних дробів з різними знаменниками",
+          title: "Обчисліть суму мішаних чисел:",
+          latexDisplay: "1\\frac{5}{12} + 2\\frac{3}{8}",
+          type: "single",
+          options: ["3\\frac{19}{24}", "3\\frac{8}{20}", "3\\frac{4}{12}", "4\\frac{1}{24}", "3\\frac{7}{24}"],
+          correct: 0
+        },
+        {
+          skill: "Віднімання звичайних дробів",
+          category: "Додавання/віднімання звичайних дробів",
+          topicToReview: "віднімання мішаних чисел та запозичення одиниці",
+          title: "Знайдіть різницю мішаних чисел:",
+          latexDisplay: "5\\frac{1}{6} - 2\\frac{3}{4}",
+          type: "single",
+          options: ["2\\frac{5}{12}", "3\\frac{1}{12}", "2\\frac{1}{2}", "3\\frac{5}{12}", "2\\frac{7}{12}"],
+          correct: 0
+        },
+        {
+          skill: "Множення звичайних дробів",
+          category: "Множення/ділення звичайних дробів",
+          topicToReview: "множення звичайних дробів та мішаних чисел",
+          title: "Обчисліть добуток:",
+          latexDisplay: "2\\frac{2}{5} \\cdot 1\\frac{9}{16}",
+          type: "single",
+          options: ["3\\frac{3}{4}", "2\\frac{18}{80}", "3\\frac{1}{4}", "4\\frac{1}{2}", "2\\frac{3}{4}"],
+          correct: 0
+        },
+        {
+          skill: "Ділення звичайних дробів",
+          category: "Множення/ділення звичайних дробів",
+          topicToReview: "ділення звичайних дробів",
+          title: "Знайдіть частку дробів:",
+          latexDisplay: "4\\frac{1}{2} \\div 1\\frac{2}{7}",
+          type: "single",
+          options: ["3\\frac{1}{2}", "4", "3\\frac{2}{7}", "2\\frac{1}{2}", "5\\frac{1}{7}"],
+          correct: 0
+        },
+        {
+          skill: "Дії з мішаними числами",
+          category: "Комбіновані вирази",
+          topicToReview: "обчислення виразів з дужками та мішаними числами",
+          title: "Знайдіть значення виразу:",
+          latexDisplay: "\\left(1\\frac{3}{4} + 2\\frac{1}{2}\\right) \\cdot \\frac{4}{17}",
+          type: "short",
+          correct: "1"
+        },
+        {
+          skill: "Додавання і віднімання десяткових дробів",
+          category: "Десяткові дроби",
+          topicToReview: "додавання та віднімання десяткових дробів",
+          title: "Обчисліть значення виразу:",
+          latexDisplay: "18{,}64 - 7{,}89 + 4{,}25",
+          type: "short",
+          correct: "15"
+        },
+        {
+          skill: "Множення десяткових дробів",
+          category: "Десяткові дроби",
+          topicToReview: "множення десяткових дробів",
+          title: "Обчисліть добуток:",
+          latexDisplay: "0{,}45 \\cdot 2{,}4",
+          type: "short",
+          correct: "1.08"
+        },
+        {
+          skill: "Ділення десяткових дробів",
+          category: "Десяткові дроби",
+          topicToReview: "ділення десяткових дробів",
+          title: "Знайдіть частку десяткових дробів:",
+          latexDisplay: "5{,}76 \\div 0{,}12",
+          type: "short",
+          correct: "48"
+        },
+        {
+          skill: "Порівняння звичайних і десяткових дробів",
+          category: "Перетворення та порівняння дробів",
+          topicToReview: "порівняння звичайних та десяткових дробів",
+          title: "Укажіть правильну нерівність:",
+          type: "single",
+          options: [
+            "\\frac{4}{5} < 0{,}75",
+            "\\frac{5}{8} > 0{,}6",
+            "\\frac{1}{3} > 0{,}35",
+            "\\frac{7}{10} < 0{,}68",
+            "\\frac{1}{4} > 0{,}3"
+          ],
+          correct: 1
+        },
+        {
+          skill: "Перетворення звичайного дробу в десятковий",
+          category: "Перетворення та порівняння дробів",
+          topicToReview: "переведення звичайного дробу в десятковий",
+          title: "Подайте дріб у вигляді десяткового дробу:",
+          latexDisplay: "\\frac{9}{20}",
+          type: "single",
+          options: ["0{,}45", "0{,}9", "0{,}25", "0{,}045", "4{,}5"],
+          correct: 0
+        },
+        {
+          skill: "Округлення десяткових дробів",
+          category: "Округлення",
+          topicToReview: "округлення десяткових дробів до сотих",
+          title: "Округліть число до сотих:",
+          latexDisplay: "24{,}3861",
+          type: "short",
+          correct: "24.39"
+        },
+        {
+          skill: "Знаходження відсотків",
+          category: "Відсотки",
+          topicToReview: "знаходження відсотків від числа",
+          title: "Знайдіть 18% від числа 350:",
+          type: "short",
+          correct: "63"
+        },
+        {
+          skill: "Порядок виконання дій у виразах",
+          category: "Комбіновані вирази",
+          topicToReview: "порядок дій у дробових виразах",
+          title: "Обчисліть значення дробового виразу:",
+          latexDisplay: "\\frac{4{,}8 - 1{,}2}{0{,}3 \\cdot 4}",
+          type: "single",
+          options: ["3", "2{,}5", "1{,}2", "4", "0{,}3"],
+          correct: 0
+        },
+        {
+          skill: "Комбіновані вирази з дробами",
+          category: "Комбіновані вирази",
+          topicToReview: "сумісні дії зі звичайними та десятковими дробами",
+          title: "Установіть відповідність між числовим виразом (1–3) та його значенням (А–Д):",
+          type: "matching",
+          leftItems: [
+            "\\frac{3}{5} + 0{,}25",
+            "2{,}5 \\cdot \\frac{2}{5}",
+            "1{,}2 \\div \\frac{3}{4}"
+          ],
+          rightOptions: ["1{,}0", "0{,}85", "0{,}75", "1{,}6", "1{,}2"],
+          correct: [1, 0, 3] // 1->Б (0.85), 2->А (1.0), 3->Г (1.6)
+        },
+        {
+          skill: "Текстова задача на дроби",
+          category: "Текстові задачі",
+          topicToReview: "розв'язування текстових задач на знаходження числа за його частиною",
+          title: "Текстова задача:",
+          description: "У магазин завезли яблука. За перший день продали 4/9 усіх завезних яблук, що становить 72 кг. Скільки всього кілограмів яблук було завезено до магазину?",
+          latexDisplay: "\\frac{4}{9} \\text{ від усієї кількості } = 72 \\text{ кг}",
+          type: "short",
+          correct: "162"
+        }
+      ],
+
+      // SET 2 (Alternative Variant)
+      [
+        {
+          skill: "Додавання звичайних дробів",
+          category: "Додавання/віднімання звичайних дробів",
+          topicToReview: "додавання звичайних дробів з різними знаменниками",
+          title: "Обчисліть суму мішаних чисел:",
+          latexDisplay: "2\\frac{2}{9} + 1\\frac{5}{6}",
+          type: "single",
+          options: ["4\\frac{1}{18}", "3\\frac{7}{15}", "4\\frac{7}{18}", "3\\frac{11}{18}", "4\\frac{5}{18}"],
+          correct: 0
+        },
+        {
+          skill: "Віднімання звичайних дробів",
+          category: "Додавання/віднімання звичайних дробів",
+          topicToReview: "віднімання мішаних чисел та запозичення одиниці",
+          title: "Знайдіть різницю мішаних чисел:",
+          latexDisplay: "7\\frac{1}{4} - 3\\frac{5}{6}",
+          type: "single",
+          options: ["3\\frac{5}{12}", "4\\frac{1}{2}", "3\\frac{1}{12}", "4\\frac{5}{12}", "3\\frac{7}{12}"],
+          correct: 0
+        },
+        {
+          skill: "Множення звичайних дробів",
+          category: "Множення/ділення звичайних дробів",
+          topicToReview: "множення звичайних дробів та мішаних чисел",
+          title: "Обчисліть добуток:",
+          latexDisplay: "3\\frac{1}{3} \\cdot 1\\frac{1}{5}",
+          type: "single",
+          options: ["4", "3\\frac{1}{15}", "4\\frac{1}{2}", "3\\frac{2}{5}", "5"],
+          correct: 0
+        },
+        {
+          skill: "Ділення звичайних дробів",
+          category: "Множення/ділення звичайних дробів",
+          topicToReview: "ділення звичайних дробів",
+          title: "Знайдіть частку дробів:",
+          latexDisplay: "2\\frac{5}{8} \\div 1\\frac{3}{4}",
+          type: "single",
+          options: ["1\\frac{1}{2}", "2", "1\\frac{3}{8}", "2\\frac{1}{4}", "1\\frac{1}{4}"],
+          correct: 0
+        },
+        {
+          skill: "Дії з мішаними числами",
+          category: "Комбіновані вирази",
+          topicToReview: "обчислення виразів з дужками та мішаними числами",
+          title: "Знайдіть значення виразу:",
+          latexDisplay: "\\left(3\\frac{1}{3} - 1\\frac{1}{2}\\right) \\cdot \\frac{6}{11}",
+          type: "short",
+          correct: "1"
+        },
+        {
+          skill: "Додавання і віднімання десяткових дробів",
+          category: "Десяткові дроби",
+          topicToReview: "додавання та віднімання десяткових дробів",
+          title: "Обчисліть значення виразу:",
+          latexDisplay: "23{,}52 - 8{,}76 + 5{,}24",
+          type: "short",
+          correct: "20"
+        },
+        {
+          skill: "Множення десяткових дробів",
+          category: "Десяткові дроби",
+          topicToReview: "множення десяткових дробів",
+          title: "Обчисліть добуток:",
+          latexDisplay: "0{,}35 \\cdot 3{,}2",
+          type: "short",
+          correct: "1.12"
+        },
+        {
+          skill: "Ділення десяткових дробів",
+          category: "Десяткові дроби",
+          topicToReview: "ділення десяткових дробів",
+          title: "Знайдіть частку десяткових дробів:",
+          latexDisplay: "7{,}56 \\div 0{,}18",
+          type: "short",
+          correct: "42"
+        },
+        {
+          skill: "Порівняння звичайних і десяткових дробів",
+          category: "Перетворення та порівняння дробів",
+          topicToReview: "порівняння звичайних та десяткових дробів",
+          title: "Укажіть правильну нерівність:",
+          type: "single",
+          options: [
+            "\\frac{3}{8} > 0{,}4",
+            "\\frac{7}{20} < 0{,}3",
+            "\\frac{3}{4} > 0{,}7",
+            "\\frac{2}{5} > 0{,}45",
+            "\\frac{1}{6} > 0{,}2"
+          ],
+          correct: 2
+        },
+        {
+          skill: "Перетворення звичайного дробу в десятковий",
+          category: "Перетворення та порівняння дробів",
+          topicToReview: "переведення звичайного дробу в десятковий",
+          title: "Подайте дріб у вигляді десяткового дробу:",
+          latexDisplay: "\\frac{13}{25}",
+          type: "single",
+          options: ["0{,}52", "0{,}13", "0{,}25", "0{,}052", "5{,}2"],
+          correct: 0
+        },
+        {
+          skill: "Округлення десяткових дробів",
+          category: "Округлення",
+          topicToReview: "округлення десяткових дробів до сотих",
+          title: "Округліть число до сотих:",
+          latexDisplay: "15{,}7482",
+          type: "short",
+          correct: "15.75"
+        },
+        {
+          skill: "Знаходження відсотків",
+          category: "Відсотки",
+          topicToReview: "знаходження відсотків від числа",
+          title: "Знайдіть 24% від числа 250:",
+          type: "short",
+          correct: "60"
+        },
+        {
+          skill: "Порядок виконання дій у виразах",
+          category: "Комбіновані вирази",
+          topicToReview: "порядок дій у дробових виразах",
+          title: "Обчисліть значення дробового виразу:",
+          latexDisplay: "\\frac{5{,}4 - 1{,}8}{0{,}4 \\cdot 3}",
+          type: "single",
+          options: ["3", "2{,}4", "4{,}5", "1{,}5", "0{,}3"],
+          correct: 0
+        },
+        {
+          skill: "Комбіновані вирази з дробами",
+          category: "Комбіновані вирази",
+          topicToReview: "сумісні дії зі звичайними та десятковими дробами",
+          title: "Установіть відповідність між числовим виразом (1–3) та його значенням (А–Д):",
+          type: "matching",
+          leftItems: [
+            "\\frac{1}{4} + 0{,}35",
+            "1{,}5 \\cdot \\frac{4}{5}",
+            "1{,}4 \\div \\frac{7}{10}"
+          ],
+          rightOptions: ["1{,}2", "0{,}8", "0{,}6", "1{,}5", "2{,}0"],
+          correct: [2, 0, 4] // 1->В (0.6), 2->А (1.2), 3->Д (2.0)
+        },
+        {
+          skill: "Текстова задача на дроби",
+          category: "Текстові задачі",
+          topicToReview: "розв'язування текстових задач на знаходження числа за його частиною",
+          title: "Текстова задача:",
+          description: "Турист пройшов 5/12 усього маршруту, що становить 15 км. Яка довжина всього маршруту?",
+          latexDisplay: "\\frac{5}{12} \\text{ від усього маршруту } = 15 \\text{ км}",
+          type: "short",
+          correct: "36"
+        }
+      ]
+    ];
+
+    createApp({
+      setup() {
+        const step = ref('start'); // 'start' | 'quiz' | 'results'
+        const studentName = ref('');
+        const variantIndex = ref(0);
+        const questions = ref(QUESTION_VARIANTS[0]);
+        
+        const currentQuestionIndex = ref(0);
+        const answers = ref(Array(15).fill(null));
+        
+        // Matching answers structure: array of [val1, val2, val3] for each question
+        const matchingAnswers = ref(Array(15).fill(null).map(() => ['', '', '']));
+
+        const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
+
+        // Helper letter conversion for matching and choices (0 -> А, 1 -> Б, etc.)
+        const getLetter = (index) => {
+          const letters = ['А', 'Б', 'В', 'Г', 'Д'];
+          return letters[index] || '';
+        };
+
+        // Render KaTeX Math formula
+        const renderKaTeX = () => {
+          nextTick(() => {
+            document.querySelectorAll('.katex-render').forEach((el) => {
+              const latex = el.getAttribute('data-latex');
+              if (latex && window.katex) {
+                try {
+                  window.katex.render(latex, el, {
+                    throwOnError: false,
+                    displayMode: false
+                  });
+                } catch (e) {
+                  el.innerText = latex;
+                }
+              }
+            });
+          });
+        };
+
+        watch([step, currentQuestionIndex], () => {
+          renderKaTeX();
+        });
+
+        onMounted(() => {
+          renderKaTeX();
+        });
+
+        const startQuiz = () => {
+          if (!studentName.value.trim()) return;
+          step.value = 'quiz';
+          currentQuestionIndex.value = 0;
+          renderKaTeX();
+        };
+
+        const nextQuestion = () => {
+          if (currentQuestionIndex.value < questions.value.length - 1) {
+            currentQuestionIndex.value++;
+          }
+        };
+
+        const prevQuestion = () => {
+          if (currentQuestionIndex.value > 0) {
+            currentQuestionIndex.value--;
+          }
+        };
+
+        // Normalize numeric strings (commas to dots, strip whitespace)
+        const normalizeNum = (val) => {
+          if (val === null || val === undefined) return '';
+          return String(val).trim().replace(',', '.').replace(/\s+/g, '');
+        };
+
+        // Evaluate single question response correctness
+        const isQuestionCorrect = (q, index) => {
+          if (q.type === 'single') {
+            return answers.value[index] === q.correct;
+          } else if (q.type === 'short') {
+            const userVal = normalizeNum(answers.value[index]);
+            const correctVal = normalizeNum(q.correct);
+            if (!userVal) return false;
+            // Float comparison tolerance or exact string match
+            const pUser = parseFloat(userVal);
+            const pCorr = parseFloat(correctVal);
+            if (!isNaN(pUser) && !isNaN(pCorr)) {
+              return Math.abs(pUser - pCorr) < 0.0001;
+            }
+            return userVal === correctVal;
+          } else if (q.type === 'matching') {
+            const mAns = matchingAnswers.value[index];
+            if (!mAns || mAns.some(a => a === '')) return false;
+            return mAns[0] === q.correct[0] && mAns[1] === q.correct[1] && mAns[2] === q.correct[2];
+          }
+          return false;
+        };
+
+        // Calculate score for matching partials or full point
+        const getQuestionScore = (q, index) => {
+          if (q.type === 'matching') {
+            const mAns = matchingAnswers.value[index];
+            let matches = 0;
+            if (mAns) {
+              if (mAns[0] === q.correct[0]) matches++;
+              if (mAns[1] === q.correct[1]) matches++;
+              if (mAns[2] === q.correct[2]) matches++;
+            }
+            return matches / 3; // Fractional score towards 1 total point
+          }
+          return isQuestionCorrect(q, index) ? 1 : 0;
+        };
+
+        const finishQuiz = () => {
+          step.value = 'results';
+          renderKaTeX();
+        };
+
+        // CALCULATED STATS FOR RESULTS
+        const totalCorrectScore = computed(() => {
+          let score = 0;
+          questions.value.forEach((q, idx) => {
+            score += getQuestionScore(q, idx);
+          });
+          // Round to 1 decimal if fractional, or integer
+          return Math.round(score * 10) / 10;
+        });
+
+        const percentageScore = computed(() => {
+          return Math.round((totalCorrectScore.value / questions.value.length) * 100);
+        });
+
+        // Category skills statistics
+        const categoryStats = computed(() => {
+          const stats = {
+            "Додавання/віднімання звичайних дробів": { name: "Додавання/віднімання звичайних дробів", correct: 0, total: 0 },
+            "Множення/ділення звичайних дробів": { name: "Множення/ділення звичайних дробів", correct: 0, total: 0 },
+            "Десяткові дроби": { name: "Десяткові дроби", correct: 0, total: 0 },
+            "Перетворення та порівняння дробів": { name: "Перетворення та порівняння дробів", correct: 0, total: 0 },
+            "Відсотки": { name: "Відсотки", correct: 0, total: 0 },
+            "Округлення": { name: "Округлення", correct: 0, total: 0 },
+            "Комбіновані вирази": { name: "Комбіновані вирази", correct: 0, total: 0 },
+            "Текстові задачі": { name: "Текстові задачі", correct: 0, total: 0 }
+          };
+
+          questions.value.forEach((q, idx) => {
+            const cat = q.category;
+            if (stats[cat]) {
+              stats[cat].total += 1;
+              stats[cat].correct += getQuestionScore(q, idx);
+            }
+          });
+
+          // Calculate percentage and format correct count
+          Object.keys(stats).forEach(k => {
+            const item = stats[k];
+            item.percent = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
+            item.correct = Math.round(item.correct * 10) / 10;
+          });
+
+          return stats;
+        });
+
+        // List of incorrect questions for breakdown block
+        const incorrectQuestions = computed(() => {
+          const list = [];
+          questions.value.forEach((q, idx) => {
+            const isCorrect = isQuestionCorrect(q, idx);
+            if (!isCorrect) {
+              let uAns = answers.value[idx];
+              let cAns = q.correct;
+              if (q.type === 'matching') {
+                uAns = matchingAnswers.value[idx];
+              }
+              list.push({
+                index: idx,
+                question: q,
+                userAnswer: uAns,
+                correctAnswer: cAns
+              });
+            }
+          });
+          return list;
+        });
+
+        // Specific topic recommendations for incorrect answers
+        const topicsToReview = computed(() => {
+          const topics = new Set();
+          incorrectQuestions.value.forEach(item => {
+            if (item.question.topicToReview) {
+              topics.add(item.question.topicToReview);
+            }
+          });
+          return Array.from(topics);
+        });
+
+        // Format student / correct answer strings nicely for display
+        const formatAnswerDisplay = (q, answer) => {
+          if (q.type === 'single') {
+            if (answer === null || answer === undefined) return '<em>Не надано</em>';
+            const optVal = q.options[answer];
+            return `<span class="font-bold">${getLetter(answer)})</span> <span class="katex-render" data-latex="${optVal}"></span>`;
+          } else if (q.type === 'short') {
+            if (!answer && answer !== 0) return '<em>Не надано</em>';
+            return `<span class="font-bold">${answer}</span>`;
+          } else if (q.type === 'matching') {
+            if (!answer || answer.every(a => a === '')) return '<em>Не надано</em>';
+            return answer.map((a, i) => `${i + 1}–${a !== '' ? getLetter(a) : '?'}`).join(', ');
+          }
+          return '';
+        };
+
+        // Restart test: cycles to next problem variant set
+        const restartQuiz = () => {
+          variantIndex.value = (variantIndex.value + 1) % QUESTION_VARIANTS.length;
+          questions.value = QUESTION_VARIANTS[variantIndex.value];
+          answers.value = Array(15).fill(null);
+          matchingAnswers.value = Array(15).fill(null).map(() => ['', '', '']);
+          currentQuestionIndex.value = 0;
+          step.value = 'quiz';
+          renderKaTeX();
+        };
+
+        return {
+          step,
+          studentName,
+          questions,
+          currentQuestionIndex,
+          currentQuestion,
+          answers,
+          matchingAnswers,
+          getLetter,
+          startQuiz,
+          nextQuestion,
+          prevQuestion,
+          finishQuiz,
+          totalCorrectScore,
+          percentageScore,
+          categoryStats,
+          incorrectQuestions,
+          topicsToReview,
+          formatAnswerDisplay,
+          restartQuiz
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
